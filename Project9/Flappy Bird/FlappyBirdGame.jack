@@ -1,0 +1,476 @@
+class FlappyBirdGame {
+  /*
+  Main game loop. Checks the user input, collisions.
+  */
+
+  field FlappyBird flier;                  // FlappyBird object.
+  field int flier_wing_frame;        // Track Bird wing image angle.
+  field int flier_drop_frame;              // Track Bird's downward movement.
+  field int bird_height_default;          // Default Bird starting height.
+  field Array obstacles;                      // Visible obstacles on display.
+  field int num_obstacles;                  // Number of obstacles visible.
+  field int spacing;           // Interval between successive obstacles.
+  field int gap_after_last;         // Amount of space following last created obstacle.
+  field int leaps;                        // Number of leaps made in game.
+  field int obstacleCount;                  // Number of obstacles created.
+  field int topScore;
+
+
+
+  /*
+  Flappy Bird Game constructor.
+  */
+  constructor FlappyBirdGame new() {
+    let bird_height_default = 150;
+    let obstacles = Array.new(10);
+    let num_obstacles = 0;
+    let spacing = 100;
+    let gap_after_last = 0;
+    let leaps = 1;
+    let obstacleCount = 0;
+    let topScore = 0;
+
+
+
+    return this;
+  }
+
+  /*
+  Display instructions on the display.
+  */
+  method void showGuide() {
+    do Output.moveCursor(0, 0);
+    do Output.printString("Welcome to Flappy Bird Game");
+    do Output.println();
+    do Output.printString("To jump, press the space bar.");
+    do Output.println();
+    do Output.printString("To quit, press the 'q' key.");
+    do Output.println();
+    do Output.printString("To pause press the 'p' key");
+    do Output.println();
+    do Output.printString("Stay alive as long as you can. Good luck!");
+    do Output.println();
+    do Output.printString("Highest Score: ");
+    do Output.printInt(topScore);
+    do Output.println();
+
+
+    return;
+  }
+
+  /*
+  Main loop for running game.
+  */
+  method void startGame() {
+    var char key;
+    var char last_key;
+    var boolean isPaused;
+    var boolean isRunning;
+
+    do resetGame();
+    do waitForGameToStart();
+    let last_key = 32;
+    let isPaused = false;
+    let isRunning = true;
+
+    while (isRunning) {
+
+       
+
+      // Handle pause state
+      let key = Keyboard.keyPressed();
+      if (key = 112) {  // 'p' key to toggle pause
+        let isPaused = ~isPaused;  // Toggle the pause state
+        if (isPaused) {
+          do Output.moveCursor(0, 0);
+          do Output.printString("Game Paused. Press Space to resume.");
+          do Output.println();
+          while (isPaused) {
+    do Output.moveCursor(0, 0);
+    do Output.printString("Game Paused");
+    do Output.println();
+    do Output.printString("Press Space to Resume, R to Restart, or Q to Quit.");
+    do Output.println();
+
+    let key = Keyboard.keyPressed();
+
+    if (key = 32) {  // Space to resume
+        let isPaused = false;
+    }
+
+    if (key = 114) {  // 'R' to restart
+        do resetGame();
+        do waitForGameToStart();
+        let isPaused = false;
+    }
+
+    if (key = 113) {  // 'Q' to quit
+        let isRunning = false;
+        return;
+    }
+
+    do Sys.wait(10);
+}
+
+
+        }
+      }
+
+      // Handle quit functionality
+      if (key = 113) {  // 'q' key to quit the game
+        do Output.moveCursor(0, 0);
+        do Output.printString("Game Quit. Press Space to Restart.");
+        do Output.println();
+        while (true) {  // Wait for the player to press space
+          let key = Keyboard.keyPressed();
+          if (key = 32) {  // Space bar to restart
+            do resetGame();  // Reset the game
+            do waitForGameToStart();   // Wait for the player to start
+            let isRunning = true;     // Restart the game loop
+            return;  // Restart the startGame method
+          }
+          do Sys.wait(10);
+        }
+      }
+
+      // Determine if new jump has occurred
+      if ((key = 32) & ~(last_key = 32)) {  // space bar
+        let leaps = leaps + 1;
+        do flier.ascend();
+      } else {
+        do updateFlierDropState();
+        do updateFlierWingState();
+      }
+
+      // Check for collisions
+      if (detectCrash()) {
+        do showEndMessage();
+        do showFinalScore();       // Display the points
+        do Sys.wait(3000);       // Wait before restarting
+        do resetGame();  // Reset the game
+        do waitForGameToStart();   // Wait for the player to start
+      }
+
+      // Draw updated game state
+      do render();
+
+      // Update last key pressed
+      let last_key = key;
+      do Sys.wait(10);
+    }
+
+    return;
+  }
+
+  /*
+  Animate Bird before game begins.
+  */
+  method void waitForGameToStart() {
+    var char key;
+    let key = Keyboard.keyPressed();
+
+    while (key = 0) {
+      do Sys.wait(10);
+      let key = Keyboard.keyPressed();
+      do flier.render();
+      do updateFlierWingState();
+    }
+
+    return;
+  }
+
+  /*
+  Set all fields to pre-game state.
+  */
+  method void resetGame() {
+    var Pipe obstacle;
+    var int i;
+    let i = 0;
+
+    do clearScreen();
+    do showGuide();
+
+    let flier = FlappyBird.new(bird_height_default);
+
+    // Remove existing obstacles.
+    while (i < num_obstacles) {
+      let obstacle = obstacles[i];
+      do obstacle.dispose();
+      let i = i + 1;
+    }
+
+    let num_obstacles = 0;
+    let obstacleCount = 0;
+    let flier_wing_frame = 1;
+    let flier_drop_frame = 1;
+    let gap_after_last = spacing;
+
+    return;
+  }
+
+  /*
+  White out display.
+  */
+  method void clearScreen() {
+    do Screen.setColor(false);
+    do Screen.drawRectangle(0, 0, 511, 255);
+
+    return;
+  }
+
+  /*
+  Display final points to display.
+  */
+  method void showFinalScore() {
+    var int points;
+    let points = computeScore();
+    if (points > topScore) {
+    let topScore = points;
+    }
+
+    do clearScreen();  // Clear the display to ensure no overlapping messages
+    do Output.moveCursor(12, 20);
+    do Output.printString("Final Score: ");
+    do Output.printInt(points);
+    do Output.println();
+
+    return;
+  }
+  
+
+  /*
+  Update flier's rising/falling status.
+*/
+method void updateFlierDropState() {
+    if (flier_drop_frame = 5) {  // Flier descends after every 5 frames
+        do flier.descend();
+        let flier_drop_frame = 1;
+    } else {
+        let flier_drop_frame = flier_drop_frame + 1;
+    }
+    return;
+}
+
+
+  /*
+  Update flier wing display state.
+  */
+  method void updateFlierWingState() {
+    // Only cycle wings after every five 'render' cycles to prevent changing too fast.
+    if (flier_wing_frame = 5) {
+      do flier.shiftWingFrame();
+      let flier_wing_frame = 1;
+    } else {
+      let flier_wing_frame = flier_wing_frame + 1;
+    }
+
+    return;
+  }
+
+  /*
+  Draw onscreen objects and update their coordinates.
+  */
+  method void render() {
+    var Pipe obstacle;
+
+    // Moves obstacles left.
+    do moveObstaclesLeft();
+    // Remove first obstacle if no longer on display.
+    do removeHiddenObstacle();
+    // Create new obstacle object if existing last obstacle has moved far enough.
+    do generateObstacle();
+
+    do flier.render();
+
+    return;
+  }
+
+  /*
+  Draw obstacles and shift their coordinates to the left.
+  */
+  method void moveObstaclesLeft() {
+    var Pipe obstacle;
+    var int i;
+
+    let i = 0;
+    while (i < num_obstacles) {
+        let obstacle = obstacles[i];
+        do obstacle.render();
+        do obstacle.moveLeft();
+        let i = i + 1; // Always increment by 1 to ensure all obstacles are processed
+    }
+
+    return;
+  }
+
+
+
+  /*
+  Remove Pipe object once it has exited the display.
+  */
+  method void removeHiddenObstacle() {
+    var int i;
+    var Pipe obstacle;
+
+    if (num_obstacles = 0) {
+      return;
+    }
+
+    let obstacle = obstacles[0];
+
+    if (obstacle.getWidthCurrent() < 1) {
+      do obstacle.dispose();
+      let num_obstacles = num_obstacles - 1;
+      let i = 0;
+      while (i < num_obstacles) {
+        let obstacles[i] = obstacles[i+1];
+        let i = i + 1;
+      }
+    }
+
+    return;
+  }
+
+  /*
+  Create new obstacle to go onscreen.
+  */
+  method void generateObstacle() {
+    var Pipe obstacle;
+
+    if (gap_after_last = spacing) {
+      let obstacles[num_obstacles] = Pipe.new(leaps);
+      let num_obstacles = num_obstacles + 1;
+      let obstacleCount = obstacleCount + 1;
+      let gap_after_last = 0;
+    } else {
+      let obstacle = obstacles[0];
+      let gap_after_last = gap_after_last + obstacle.getWidthIncrement();
+    }
+
+    return;
+  }
+
+  /*
+  Calculate final points.
+  */
+  method int computeScore() {
+    var Pipe obstacle;
+    var int i;
+    var int points;
+
+    let points = obstacleCount;
+    let i = 0;
+    while (i < num_obstacles) {
+      let obstacle = obstacles[i];
+      if (flier.getXOffset() < (obstacle.getXOffset() + obstacle.getWidthCurrent() + 1)) {
+        let points = points - 1;
+      }
+      let i = i + 1;
+    }
+
+    return points;
+  }
+
+  /*
+  Determine if there been a collision between flier and borders or obstacles.
+  */
+  method boolean detectCrash() {
+    var Pipe obstacle;
+    var int i;
+
+    let i = 0;
+    while (i < num_obstacles) {
+      let obstacle = obstacles[i];
+      if (isCollision(obstacle)) {
+        return true;
+      }
+      let i = i + 1;
+    }
+
+    return false;
+  }
+
+  /*
+  Has Bird collided with specific obstacle.
+  */
+  method boolean isCollision(Pipe obstacle) {
+    // Has flier hit the top of the display.
+    if (flier.getYOffset() = 0) {
+      return true;
+    }
+
+    // Has flier hit the bottom of the display.
+    if ((flier.getYOffset() + flier.getSizeY()) = 255) {
+      return true;
+    }
+
+    // Is flier still in front of obstacle.
+    if (obstacle.getXOffset() > (flier.getXOffset() + flier.getSizeX() + 1)) {
+      return false;
+    }
+
+    // Has flier passed obstacle.
+    if ((obstacle.getXOffset() + obstacle.getWidthCurrent()) < flier.getXOffset()) {
+      return false;
+    }
+
+    // Has flier hit top section of obstacle.
+    if (obstacle.getGapTop() > flier.getYOffset()) {
+      return true;
+    }
+
+    // Has flier hit bottom section of obstacle.
+    if (obstacle.getGapBottom() < (flier.getYOffset() + flier.getSizeY())) {
+      return true;
+    }
+
+    return false;
+  }
+
+  /*
+  Dispose of FlappyBirdGame object and objects created as properties.
+  */
+  method void dispose() {
+    var Pipe obstacle;
+    var int i;
+    let i = 0;
+    while (i < num_obstacles) {
+      let obstacle = obstacles[i];
+      do obstacle.dispose();
+      let i = i + 1;
+    }
+
+    do flier.dispose();
+
+    do Memory.deAlloc(this);
+
+    return;
+  }
+
+  method void showEndMessage() {
+    var int i;
+    var int xPos;
+    var int yPos;
+
+    do clearScreen();  // Clear the display
+
+    // Animate growing text
+    let i = 1;
+    while (~(i > 10)) {  // Repeat to create the growing effect
+        let xPos = 256 - (i * 10);  // Center horizontally, adjust by size
+        let yPos = 128 - (i * 2);   // Center vertically, adjust by size
+        do Output.moveCursor(yPos / 8, xPos / 8);  // Adjust cursor for scaling
+        do Output.printString("OOPS YOU KILLED THE BIRD. GAME OVER");
+        do Output.println();
+        do Sys.wait(200);  // Delay for animation
+        do clearScreen();     // Clear the display between frames
+        let i = i + 1;
+    }
+
+    // Final large static text
+    do clearScreen();  // Clear the display for the final points display
+    return;
+}
+}
+
+  

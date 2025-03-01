@@ -1,0 +1,13 @@
+class Mod {
+  /*
+  Modulus operator function.
+  */
+  function int remainder(int dividend, int divisor)
+  {
+    var int quotient;
+
+    let quotient = dividend / divisor;
+
+    return (dividend - (quotient * divisor));
+  }
+}

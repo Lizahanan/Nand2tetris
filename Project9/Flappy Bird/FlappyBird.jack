@@ -1,0 +1,237 @@
+class FlappyBird {
+    /*
+    Models the FlappyBird object and creates/updates the flier image.
+    */
+
+    field int y_coord;           // Y-coordinate on display
+    field int x_coord;           // X-coordinate on display
+    field int width;             // Width of flier image.
+    field int height;             // Height of flier image.
+    field int wing_state;         // Which wing image is currently displayed.
+    field Array wing_up_frame;         // Image coords for wing `up` state.
+    field Array wing_mid_frame;        // Image coords for wing `middle` state.
+    field Array wing_down_frame;       // Image coords for wing `down` state.
+    field Array bird_vector;      // Image coords for current wing state.
+
+    /*
+        FlappyBird object constructor.
+
+        @param int altitude Y coordinate to first show flier image.
+    */
+    constructor FlappyBird new(int altitude) {
+        let y_coord = altitude;
+        let x_coord = 160;
+        let width = 16;
+        let height = 12;
+
+        let wing_state = 1;
+        do createWingUpFrame();
+        do createWingMidFrame();
+        do createWingDownFrame();
+
+        do render();
+        return this;
+    }
+
+    /*
+        Move flier image coordinates up.
+    */
+    method void ascend() {
+        do clear();
+        if (y_coord > 30) {
+            let y_coord = y_coord - 30;
+        } else {
+            let y_coord = 0;
+        }
+
+        return;
+    }
+
+    /*
+    Move flier image coordinates down.
+    */
+    method void descend() {
+        do clear();
+        if (y_coord < (255 - height - 5)) {
+            let y_coord = y_coord + 5;
+        } else {
+            let y_coord = 255 - height;
+        }
+        return;
+    }
+
+    /*
+    Erase flier image.
+    */
+    method void clear()
+    {
+        do Screen.setColor(false);
+        do Screen.drawRectangle(x_coord, y_coord, x_coord + width, y_coord + height);
+
+        return;
+    }
+
+    /*
+    Build Array of wing 'up' state image coordinates.
+    */
+    method void createWingUpFrame() {
+
+        let wing_up_frame = Array.new(12);
+
+        let wing_up_frame[0] = 4032;
+        let wing_up_frame[1] = 4656;
+        let wing_up_frame[2] = 8456;
+        let wing_up_frame[3] = 20766;
+        let wing_up_frame[4] = 20769;
+        let wing_up_frame[5] = 16961;
+        let wing_up_frame[6] = -959;
+        let wing_up_frame[7] = -32222;
+        let wing_up_frame[8] = -740;
+        let wing_up_frame[9] = -32252;
+        let wing_up_frame[10] = 31768;
+        let wing_up_frame[11] = 992;
+
+        return;
+    }
+
+    /*
+    Build Array of wing 'middle' state image coordinates.
+    */
+    method void createWingMidFrame() {
+
+        let wing_mid_frame = Array.new(12);
+
+        let wing_mid_frame[0] = 4032;
+        let wing_mid_frame[1] = 4656;
+        let wing_mid_frame[2] = 8456;
+        let wing_mid_frame[3] = 20740;
+        let wing_mid_frame[4] = 20740;
+        let wing_mid_frame[5] = 16958;
+        let wing_mid_frame[6] = -959;
+        let wing_mid_frame[7] = -32191;
+        let wing_mid_frame[8] = -706;
+        let wing_mid_frame[9] = -32252;
+        let wing_mid_frame[10] = 31768;
+        let wing_mid_frame[11] = 992;
+
+        return;
+    }
+
+  /*
+  Build Array of wing 'down' state image coordinates.
+  */
+  method void createWingDownFrame() {
+
+    let wing_down_frame = Array.new(12);
+
+    let wing_down_frame[0] = 4032;
+    let wing_down_frame[1] = 4656;
+    let wing_down_frame[2] = 8456;
+    let wing_down_frame[3] = 20740;
+    let wing_down_frame[4] = 20740;
+    let wing_down_frame[5] = 16898;
+    let wing_down_frame[6] = -962;
+    let wing_down_frame[7] = -32191;
+    let wing_down_frame[8] = -735;
+    let wing_down_frame[9] = -32239;
+    let wing_down_frame[10] = 31774;
+    let wing_down_frame[11] = 992;
+
+    return;
+  }
+
+  /*
+  Cycle flier wing state to next in loop.
+  */
+  method void shiftWingFrame()
+  {
+    if (wing_state = 3) {
+      let wing_state = 1;
+    } else {
+      let wing_state = wing_state + 1;
+    }
+
+    return;
+  }
+
+  /*
+  Return image coordinates for current wing state.
+  */
+  method Array fetchFlierVector()
+  {
+    if (wing_state = 1) {
+      return wing_up_frame;
+    }
+
+    if (wing_state = 2) {
+      return wing_mid_frame;
+    }
+
+    return wing_down_frame;
+  }
+
+  /*
+  Draw flier.
+  */
+  method void render() {
+    var int memAddress;
+    let memAddress = (16384 + (y_coord * 32) + (x_coord/16));
+
+    let bird_vector = fetchFlierVector();
+
+    do Memory.poke(memAddress+0, bird_vector[0]);
+    do Memory.poke(memAddress+32, bird_vector[1]);
+    do Memory.poke(memAddress+64, bird_vector[2]);
+    do Memory.poke(memAddress+96, bird_vector[3]);
+    do Memory.poke(memAddress+128, bird_vector[4]);
+    do Memory.poke(memAddress+160, bird_vector[5]);
+    do Memory.poke(memAddress+192, bird_vector[6]);
+    do Memory.poke(memAddress+224, bird_vector[7]);
+    do Memory.poke(memAddress+256, bird_vector[8]);
+    do Memory.poke(memAddress+288, bird_vector[9]);
+    do Memory.poke(memAddress+320, bird_vector[10]);
+    do Memory.poke(memAddress+352, bird_vector[11]);
+
+    return;
+  }
+
+  /*
+  Get image X-coordinate.
+  */
+  method int getXOffset()
+  {
+    return x_coord;
+  }
+
+  /*
+  Get image Y-coordinate.
+  */
+  method int getYOffset()
+  {
+    return y_coord;
+  }
+
+  /*
+  Get image width.
+  */
+  method int getSizeX()
+  {
+    return width;
+  }
+
+  /*
+  Get image height.
+  */
+  method int getSizeY()
+  {
+    return height;
+  }
+
+  /*
+  Dispose of Bird object.
+  */
+  method void dispose() {
+     do Memory.deAlloc(this);
+     return;
+  }
+}

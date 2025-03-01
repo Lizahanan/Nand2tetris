@@ -1,3 +1,7 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/1/Mux16.hdl
 /**
  * 16-bit multiplexor: 
  * for i = 0, ..., 15:
@@ -24,4 +28,4 @@ CHIP Mux16 {
     Mux(a=a[13], b=b[13], sel=sel, out=out[13]);
     Mux(a=a[14], b=b[14], sel=sel, out=out[14]);
     Mux(a=a[15], b=b[15], sel=sel, out=out[15]);
-
+    }

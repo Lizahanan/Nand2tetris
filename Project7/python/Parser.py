@@ -6,12 +6,25 @@ and returns an iterable of commands.
 
 class Parser:
     #constants for command types
+    C_ARITHMETIC = "C_ARITHMETIC"
+    C_PUSH = "C_PUSH"
+    C_POP = "C_POP"
 
     def __init__(self,file):
         '''
         Opens the input file/stream and gets ready to parse it.
         '''
-        pass
+        self.commands = [] #list of commands
+        #open the file 
+        with open(file, 'r') as f:
+            for line in f:
+                #remove whitespace and inline comments
+                line = line.split("//")[0].strip()
+                if line:
+                    self.commands.append(line)
+        self.current_command = None
+        self.current_index = 0
+
 
     def hasMoreCommands(self):
         '''

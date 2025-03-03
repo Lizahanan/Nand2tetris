@@ -128,8 +128,35 @@ class CodeWriter:
         self.write_line('M=D')
         self.increment_SP()
 
+    def writePop(self, segment, index):
+        if segment == 'constant':
+            raise ValueError('Cannot pop to constant segment')
+        elif segment in ['local', 'argument', 'this', 'that']:
+            self.write_line('@' + self.segment_base[segment])
+            self.write_line('D=M')
+            self.write_line('@' + index)
+            self.write_line('D=D+A')
+            self.write_line('@R13') #store the address in R13 which holds the target address
+            self.write_line('M=D')
+            self.pop_to_D()
+            self.write_line('@R13')
+            self.write_line('A=M')
+            self.write_line('M=D')
+        elif segment == 'temp':
+            self.pop_to_D()
+            self.write_line('@' + str(self.segment_base[segment] + index))
+            self.write_line('M=D')
+        elif segment == 'pointer':
+            self.pop_to_D()
+            self.write_line('@' + str(self.segment_base[segment] + index))
+            self.write_line('M=D')
+        elif segment == 'static':
+            self.pop_to_D()
+            self.write_line('@' + self.file_name + '.' + index)
+            self.write_line('M=D')
+       
+
+
         
 
-    def close(self):
-        '''Closes the output file.'''
-        self.file.close() #close the file
+    

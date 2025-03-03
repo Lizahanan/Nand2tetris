@@ -73,6 +73,4 @@ class Parser:
         else:
             raise ValueError(f"Current command {self.current_command} of type {self.commandType()} does not have a second argument")
 
-    def close(self):
-        ''' closes the file'''
-        pass
+    

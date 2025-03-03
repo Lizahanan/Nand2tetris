@@ -155,7 +155,7 @@ class CodeWriter:
             self.write_line('@' + self.file_name + '.' + index)
             self.write_line('M=D')
        
-       def close(self):
+    def close(self):
         '''Closes the output file'''
         self.file.close()
 

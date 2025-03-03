@@ -30,8 +30,8 @@ def main():
         else:
             address += 1
 
-    #second pass : generate the binary code
-    parser = Parser(file_path)
+    #second pass : generate the binary codes
+    parser = Parser.Parser(file_path)
     binary_code = [] #list to store the binary code
     while parser.hasMoreCommands():
         parser.advance()

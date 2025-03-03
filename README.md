@@ -26,7 +26,7 @@ This repository contains my implementations of projects from the **Nand2Tetris**
 
 ## Course Overview
 
-The **Nand2Tetris** course takes a bottom-up approach to computer science, starting from hardware design and moving through assembly language, virtual machines, and high-level programming. The projects in this repository follow the Digital Systems curriculum from Reichman University, designed by Shimon Schocken and Noam Nisan.
+The **Nand2Tetris** course takes a bottom-up approach to computer science, starting from hardware design and moving through assembly language, virtual machines, and high-level programming. The projects in this repository follow the Digital Systems curriculum from Reichman University, designed by Shimon Schocken and Noam Nisan, lectured by Shimon Schocken.
 
 ---
 

@@ -3,7 +3,19 @@
 
 class CodeWriter:
 
-    
+    #dictionary to store the segment base addresses
+    segment_base = {
+        'local' : 'LCL',
+        'argument' : 'ARG',
+        'this' : 'THIS',
+        'that' : 'THAT',
+        'temp': 5,
+        'pointer' : 3,
+        'static' : 16,
+        'constant' : 'CONSTANT'
+    }
+
+
 
     def __init__(self, output_file, file_name):
         '''Opens the output file/stream and gets ready to write into it.'''
@@ -91,9 +103,32 @@ class CodeWriter:
 
         
 
-    def writePushPop(self, command, segment, index):
+    def writePush(self, segment, index):
         '''Writes the assembly code that is the translation of the given command, where command is either C_PUSH or C_POP.'''
-        pass
+        if segment == 'constant':
+            self.write_line('@' + index)
+            self.write_line('D=A')
+        elif segment in ['local', 'argument', 'this', 'that']:
+            self.write_line('@' + self.segment_base[segment])
+            self.write_line('D=M')
+            self.write_line('@' + index)
+            self.write_line('A=D+A')
+            self.write_line('D=M')
+        elif segment == 'temp':
+            self.write_line('@' + str(self.segment_base[segment] + index))
+            self.write_line('D=M')
+        elif segment == 'pointer':
+            self.write_line('@' + str(self.segment_base[segment] + index))
+            self.write_line('D=M')
+        elif segment == 'static':
+            self.write_line('@' + self.file_name + '.' + index)
+            self.write_line('D=M')
+        self.write_line('@SP')
+        self.write_line('A=M')
+        self.write_line('M=D')
+        self.increment_SP()
+
+        
 
     def close(self):
         '''Closes the output file.'''

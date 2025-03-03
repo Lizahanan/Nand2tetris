@@ -47,4 +47,18 @@ class Parser:
         else:
             return "C_COMMAND"
         
-            
+    
+    def symbol(self):
+        ''' Returns the symbol of the current command 
+            Only called when commandType is A_COMMAND or L_COMMAND
+            for A_COMMAND returns Xxx where @Xxx
+            for L_COMMAND returns Xxx where (Xxx)
+        '''
+        if self.commandType() == "A_COMMAND":
+            return self.current_command[1:] #remove the @ using slicing 
+        elif self.commandType() == "L_COMMAND":
+            return self.current_command[1:-1] #from first index to second last index using slicing, remove the parenthesis
+        else:
+            raise ValueError("Command type is not A_COMMAND or L_COMMAND, cannot return symbol")
+        
+        

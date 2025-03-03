@@ -1,6 +1,6 @@
 import sys
 
-from python import Parser, Code, SymbolTable
+import Parser, Code, SymbolTable
 
 '''Assembler for the Hack computer
     Assemble the given .asm file into a .hack file
@@ -20,7 +20,7 @@ def main():
     symbol_table = SymbolTable.SymbolTable()
 
     #first pass : build the symbol table 
-    parser = Parser(file_path)
+    parser = Parser.Parser(file_path)
     address = 0
     while parser.hasMoreCommands():
         parser.advance()

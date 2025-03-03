@@ -17,7 +17,7 @@ This repository contains my implementations of projects from the **Nand2Tetris**
   - [Project 7: Virtual Machine - Part I](#project-7-virtual-machine---part-i)
   - [Project 8: Virtual Machine - Part II](#project-8-virtual-machine---part-ii)
   - [Project 9: Building a Game](#project-9-building-a-game)
-  - [Project 10: Compiler](#project-10-compiler)
+  - [Project 11: Compiler](#project-10-compiler)
 - [How to Use](#how-to-use)
 - [Acknowledgments](#acknowledgments)
 - [Credits and Contributions](#credits-and-contributions)
@@ -74,7 +74,7 @@ The **Nand2Tetris** course takes a bottom-up approach to computer science, start
 - **Focus:** Using the Jack language to develop a complete software project.
 - **Outcome:** Demonstrates a full hardware-software stack understanding, showcasing creativity and problem-solving skills.
 
-### Project 10: Compiler
+### Project 11: Compiler
 - **Focus:** Building a tokenizer and parser for the Jack programming language.
 - **Key Components:** 
   - Conversion of Jack source code into an abstract syntax tree (AST).

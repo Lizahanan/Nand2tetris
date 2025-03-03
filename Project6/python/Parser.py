@@ -61,4 +61,55 @@ class Parser:
         else:
             raise ValueError("Command type is not A_COMMAND or L_COMMAND, cannot return symbol")
         
+    '''The following 3 methods are only called for C_COMMAND
+    They are used to parse the current command into its components
+    dest, comp, jump
+    dest=comp;jump
+    '''
+
+    def dest(self):
+        ''' Returns the dest mnemonic for the current 
+        command if the current command is C_COMMAND
+        '''
+        #check if command is C_COMMAND
+        if self.commandType() == "C_COMMAND":
+            if '=' in self.current_command:
+                return self.current_command.split("=")[0].strip()
+            else:
+                return "" #if there is no dest return empty string
+        else:
+            raise ValueError("Command type is not C_COMMAND, cannot return dest")
+        
+    def comp(self):
+        '''Returns the comp mnemonic for the current command
+        if the current command is C_COMMAND
+        '''
+        if self.commandType()== "C_COMMAND":
+            parts = self.current_command.split("=")
+            #if there is no dest, the comp is the whole command
+            comp_jump = parts[1] if len(parts) == 2 else parts[0] #if there is no dest, the comp is the whole command
+            if ';' in comp_jump:
+                return comp_jump.split(";")[0].strip() #return the comp part if jump is present
+            else:
+                return comp_jump.strip() #return the comp part if jump is not present
+        else:   
+            raise ValueError("Command type is not C_COMMAND, cannot return comp")
+
+
+    def jump(self):
+        '''Returns the jump mnemonic for the current command
+        if the current command is C_COMMAND
+        '''
+        if self.commandType() == "C_COMMAND":
+            if ';' in self.current_command:
+                return self.current_command.split(";")[1].strip()
+            else:
+                return ""
+        else:
+            raise ValueError("Command type is not C_COMMAND, cannot return jump")   
+
+
+            
+        
+        
         

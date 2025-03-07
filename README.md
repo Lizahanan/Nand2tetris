@@ -69,6 +69,7 @@ The **Nand2Tetris** course takes a bottom-up approach to computer science, start
 ### Project 8: Virtual Machine - Part II
 - **Focus:** Extending the VM translator to support program control flow.
 - **Key Components:** If-statements, loops, function calls, call stack, and function returns.
+- *Note* The project is fully implemented in python only. Project 8 in java is the same as project 7 -> not a full VM translator
 
 ### Project 9: Building a Game
 - **Focus:** Using the Jack language to develop a complete software project.
@@ -80,6 +81,7 @@ The **Nand2Tetris** course takes a bottom-up approach to computer science, start
   - Conversion of Jack source code into an abstract syntax tree (AST).
   - Code generation from the AST into VM instructions.
   - Support for variable allocation, function calls, and control flow.
+  
 
 ---
 

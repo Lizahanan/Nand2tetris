@@ -178,9 +178,13 @@ class CodeWriter:
         else:
             return label 
 
+    '''Writes Assembly code for goto command
+        the command includes uncoditional "jump
+    '''
+    def writeGoto(self,label):
+        full_label = self.get_Label(label)
+        self.file.write(f"@{label}\n0;JMP\n")
 
-    def writeGoto(self):
-        pass
 
     def writeIf(self):
         pass

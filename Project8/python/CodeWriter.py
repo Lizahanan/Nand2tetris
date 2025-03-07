@@ -107,12 +107,12 @@ class CodeWriter:
     def writePush(self, segment, index):
         '''Writes the assembly code that is the translation of the given command, where command is either C_PUSH or C_POP.'''
         if segment == 'constant':
-            self.write_line('@' + index)
+            self.write_line('@' + "index")
             self.write_line('D=A')
         elif segment in ['local', 'argument', 'this', 'that']:
             self.write_line('@' + self.segment_base[segment])
             self.write_line('D=M')
-            self.write_line('@' + index)
+            self.write_line('@' + "index")
             self.write_line('A=D+A')
             self.write_line('D=M')
         elif segment == 'temp':

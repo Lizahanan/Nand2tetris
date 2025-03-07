@@ -169,7 +169,7 @@ class CodeWriter:
     '''
     def writeLabel(self,label):
         full_label = self.get_Label(label)
-        self.file.write(f"({full_label})") 
+        self.file.write(f"({full_label})\n") 
 
     
     def get_Label(self, label):

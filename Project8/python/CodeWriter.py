@@ -178,16 +178,23 @@ class CodeWriter:
         else:
             return label 
 
-    '''Writes Assembly code for goto command
-        the command includes uncoditional "jump
+    '''
+    Writes Assembly code for goto command
+    the command includes uncoditional "jump
     '''
     def writeGoto(self,label):
         full_label = self.get_Label(label)
         self.file.write(f"@{label}\n0;JMP\n")
 
-
-    def writeIf(self):
-        pass
+    '''
+    Assembly code for if-goto command
+    '''
+    def writeIf(self,label,):
+        full_label = self.get_Label(label)
+        #we have to pop the condition 
+        #pop the top stack value 
+        self.pop_to_D() #pop the value
+        self.file.write(f"@{full_label}\nD;JNE\n")
 
     def writeFunction(self):
         pass

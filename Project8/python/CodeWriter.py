@@ -159,6 +159,26 @@ class CodeWriter:
         '''Closes the output file'''
         self.file.close()
 
+    #all of the following are extension for project 8
+        
+    def writeLabel(self):
+        pass
+
+    def writeGoto(self):
+        pass
+
+    def writeIf(self):
+        pass
+
+    def writeFunction(self):
+        pass
+
+    def writeCall(self):
+        pass
+
+    def writeReturn(self):
+        pass
+
 
         
 

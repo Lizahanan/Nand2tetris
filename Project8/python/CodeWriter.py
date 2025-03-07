@@ -196,8 +196,21 @@ class CodeWriter:
         self.pop_to_D() #pop the value
         self.file.write(f"@{full_label}\nD;JNE\n")
 
-    def writeFunction(self):
-        pass
+
+    def writeFunction(self,funName,nVars):
+        self.current_function = funName
+        #we write the label for the function 
+        self.file.write(f"({funName})\n")
+        #now we need set all locals to 0 -> we push 0 nvars times
+        for _ in range(nVars):
+            self.write_line("@0")
+            self.write_line("D=A")#store 0 in data 
+            self.write_line('@SP') #get the stack pointer
+            self.write_line("A=M") #save address of the pointer
+            self.write_line("M=D") #set to 0 at that address
+            self.increment_SP #intxrement the pointer 
+        
+
 
     def writeCall(self):
         pass

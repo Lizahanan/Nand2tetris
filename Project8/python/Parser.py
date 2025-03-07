@@ -56,6 +56,8 @@ class Parser:
         '''
         if self.current_command in ["add", "sub", "neg", "eq", "gt", "lt", "and", "or", "not"]:
             return self.C_ARITHMETIC
+        elif self.current_command is None:
+            return None
         elif self.current_command.startswith("push"):
             return self.C_PUSH
         elif self.current_command.startswith("pop"):

@@ -21,6 +21,7 @@ class CodeWriter:
         '''Opens the output file/stream and gets ready to write into it.'''
         self.file = open(output_file, 'w') #open the file in write mode
         self.file_name = file_name #name of the file used for static variables 
+        self.current_function="" #extension for projeect 8
         self.label_count = 0 #used to generate unique labels
 
 
@@ -160,9 +161,23 @@ class CodeWriter:
         self.file.close()
 
     #all of the following are extension for project 8
-        
-    def writeLabel(self):
-        pass
+    '''
+    WriteLabel is called with an argument "label"
+    the command marks the destination of the goto command 
+    in hack code (LABEL)
+
+    '''
+    def writeLabel(self,label):
+        full_label = self.get_Label(label)
+        self.file.write(f"({full_label})") 
+
+    
+    def get_Label(self, label):
+        if self.current_function:
+            return f"{self.current_function}${label}"
+        else:
+            return label 
+
 
     def writeGoto(self):
         pass

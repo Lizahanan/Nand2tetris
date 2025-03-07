@@ -60,6 +60,19 @@ class Parser:
             return self.C_PUSH
         elif self.current_command.startswith("pop"):
             return self.C_POP
+        #extension for project 8
+        elif self.current_command.startswith("label"):
+            return self.C_LABEL
+        elif self.current_command.startswith("goto"):
+            return self.C_GOTO
+        elif self.current_command.startswith("if-goto"):
+            return self.C_IF
+        elif self.current_command.startswith("function"):
+            return self.C_FUNCTION
+        elif self.current_command.startswith("return"):
+            return self.C_RETURN
+        elif self.current_command.startswith("call"):
+            return self.C_CALL
         else:
             raise ValueError("Invalid command: {}".format(self.current_command))
 

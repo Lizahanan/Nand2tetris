@@ -81,6 +81,9 @@ class Parser:
         #if the command is arithmetic, return the command itself
         if self.commandType() == self.C_ARITHMETIC:
             return self.current_command
+        #the function shouldnt be called if the command type is return -> extension for project 8
+        if self.commandType() == self.C_RETURN:
+            raise Exception("The function shouldnt be called for return command")
         #otherwise, return the first argument
         return self.current_command.split()[1] 
 
@@ -88,8 +91,8 @@ class Parser:
         '''
         Returns the second argument of the current command.
         '''
-        #only push and pop commands have a second argument
-        if self.commandType() in [self.C_PUSH, self.C_POP]:
+        #only push and pop commands have a second argument + extension for project 8
+        if self.commandType() in [self.C_PUSH, self.C_POP, self.C_FUNCTION, self.C_CALL]:
             return int(self.current_command.split()[2])
         else:
             raise ValueError(f"Current command {self.current_command} of type {self.commandType()} does not have a second argument")

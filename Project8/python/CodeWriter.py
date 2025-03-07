@@ -244,7 +244,27 @@ class CodeWriter:
 
 
     def writeReturn(self):
-        pass
+
+        #endframe = LCL 
+        self.file.write("@LCL\nD=M\n@R13\nM=D\n")
+        #store return address in endframe-5
+        self.file.write("@5\nA=D-A\nD=M\n@R14\nM=D")
+        #*ARG=pop()
+        self.file.write("@SP\nAM=M-1\nD=M\n@ARG\nA=M\nM=D\n")
+        #SP = ARG + 1
+        self.file.write("@ARG\nD=M+1\n@SP\nM=D\n")
+        '''
+        THAT = *(endFrame – 1) 
+        THIS = *(endFrame – 2) 
+        ARG = *(endFrame – 3) 
+        LCL = *(endFrame – 4) 
+        '''
+        for offset,segment in zip(range(1,5),["THAT","THIS","ARG","LCL"]):
+            self.file.write(f"@R13\nAM=M-1\nD=M\n@{segment}\nM=D\n")
+        #goto return
+            self.file.write("@R14\nA=M\n0;JMP\n")
+
+
 
 
         

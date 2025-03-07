@@ -135,7 +135,7 @@ class CodeWriter:
         elif segment in ['local', 'argument', 'this', 'that']:
             self.write_line('@' + self.segment_base[segment])
             self.write_line('D=M')
-            self.write_line('@' + index)
+            self.write_line('@' + "index")
             self.write_line('D=D+A')
             self.write_line('@R13') #store the address in R13 which holds the target address
             self.write_line('M=D')

@@ -60,7 +60,7 @@ class CodeWriter:
             self.decrement_SP() #decrement the stack pointer
             self.write_line('A=M') #load the address of the second element
             if command == 'add':
-                self.write_line('M=M+D') #add the top two elements and store the result in the second element
+                self.write_line('M=D+M') #add the top two elements and store the result in the second element
             elif command == 'sub':
                 self.write_line('M=M-D') #subtract the top element from the second element and store the result in the second element
             elif command == 'and':

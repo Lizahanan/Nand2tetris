@@ -211,9 +211,37 @@ class CodeWriter:
             self.increment_SP #intxrement the pointer 
         
 
+    '''
+    When handling call we need to take care of the following:
+    -Save return address
+    -save callers segment pointer 
+    -repositon arg 
+    -reposition lcl 
+    -goto execute the callee's code'''
+    def writeCall(self,funName,nArgs):
+        #generate return label 
+        return_label = f"{funName}$ret{self.label_count}"
+        self.label_count+=1
 
-    def writeCall(self):
-        pass
+        #push the return address 
+        self.file.write(f"@{return_label}\nD=A\n@SP\nA=M\nM=D") 
+        self.increment_SP
+
+        #Now we need to push LCL, ARG , THIS, THAT 
+        for segment in ["LCL", "ARG" , "THIS", "THAT"]:
+            self.file.write(f"@{segment}\nD=M\n@SP\nA=M\nM=D")
+            self.increment_SP
+        
+        #now we need to repositon LCL and ARG
+        self.file.write(f"@SP\nD=M\n@{nArgs + 5}\nD=D-A\n@ARG\nM=D\n")
+        self.file.write("@SP\nD=M\n@LCL\nM=D")
+
+        #now we transfer control to the callee
+        self.file.write(f"@{funName}\n0;JMP\n")
+
+        #finally declare return label 
+        self.file.write(f"{return_label}")
+
 
     def writeReturn(self):
         pass
